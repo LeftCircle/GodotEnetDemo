@@ -12,9 +12,9 @@ var input_frame : int = 0
 var previous_command_frame : int = -1
 
 func execute():
-	Logging.log_line("----------------------------- Command Frame %s -----------------------------" % [frame])
 	previous_command_frame = frame
 	frame = (frame + 1) % MAX_FRAME_NUMBER
+	Logging.log_line("----------------------------- Command Frame %s -----------------------------" % [frame])
 
 static func is_more_recent_than(future_frame : int, past_frame : int) -> bool:
 	return (((future_frame > past_frame) and (future_frame - past_frame <= HALF_MAX_FRAME)) or

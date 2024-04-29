@@ -15,5 +15,7 @@ func _on_client_button_pressed() -> void:
 	$SendPackets.disabled = true
 
 func _on_send_packets_pressed() -> void:
+	print("Syncing command frame then sending packets")
+	Server.send_frame_sync()
 	set_physics_process(true)
 

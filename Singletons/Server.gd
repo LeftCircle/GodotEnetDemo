@@ -3,12 +3,15 @@ extends Node
 signal player_connected(network_id)
 signal player_disconnected(network_id)
 
+enum {FRAME_SYNC, NORMAL_PACKET}
+
 var is_server : bool = false
 
 var network = ENetMultiplayerPeer.new()
 var server_api = SceneMultiplayer.new()
 var connected_players = []
 var packet : PackedByteArray = PackedByteArray([])
+
 
 func execute():
 	server_api.poll()
@@ -53,21 +56,34 @@ func _on_packet_from_client(id : int, byte_array) -> void:
 func _on_packet_from_server(id : int, byte_array) -> void:
 	#print("Packet from server %s" % [byte_array])\
 	byte_array = PackedByteArray(byte_array)
+	var packet_type = byte_array.decode_u8(0)
+	var s_frame = byte_array.decode_u64(0)
+	if packet_type == FRAME_SYNC:
+		CommandFrame.frame = s_frame
+		CommandFrame.previous_command_frame = CommandFrame.get_previous_frame(s_frame)
 	var peer : PacketPeer = network.get_peer(id)
 	var rtt : int = peer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME)
-	var s_frame = byte_array.decode_u64(0)
 	Logging.log_line("Packet from server received! rtt = %s. Sent frame = %s" % [rtt , s_frame])
 
 func send_packet() -> void:
 	if is_server:
 		var b_array : PackedByteArray = PackedByteArray([])
-		b_array.resize(8)
-		b_array.encode_u64(0, CommandFrame.frame)
+		b_array.resize(9)
+		b_array.encode_u8(0, NORMAL_PACKET)
+		b_array.encode_u64(1, CommandFrame.frame)
 		server_api.send_bytes(b_array, 0, MultiplayerPeer.TRANSFER_MODE_UNRELIABLE, 2)
 		Logging.log_line("Sending packet for frame %s" % [CommandFrame.frame])
 		#var server = network.get_peer(0)
 		#for id in connected_players:
 			##var peer : ENetPacketPeer = network.get_peer(id)
 			#server.send(id, packet, ENetPacketPeer.FLAG_UNRELIABLE_FRAGMENT)
-		pass
+
+func send_frame_sync() -> void:
+	if is_server:
+		var b_array : PackedByteArray = PackedByteArray([])
+		b_array.resize(9)
+		b_array.encode_u8(0, FRAME_SYNC)
+		b_array.encode_u64(1, CommandFrame.frame)
+		server_api.send_bytes(b_array, 0, MultiplayerPeer.TRANSFER_MODE_UNRELIABLE, 2)
+		Logging.log_line("Sending frame sync for frame %s" % [CommandFrame.frame])
 
