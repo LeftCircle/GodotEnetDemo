@@ -34,4 +34,4 @@ folder_colors={
 
 [global]
 
-connect_to_local=true
+connect_to_local=false

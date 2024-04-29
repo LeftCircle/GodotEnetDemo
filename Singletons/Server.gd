@@ -52,15 +52,19 @@ func _on_packet_from_client(id : int, byte_array) -> void:
 
 func _on_packet_from_server(id : int, byte_array) -> void:
 	#print("Packet from server %s" % [byte_array])\
-	var my_id : int = server_api.get_unique_id()
-	var my_peer : PacketPeer = network.get_peer(my_id)
-	var my_rtt : int = my_peer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME)
-	Logging.log_line("Packet from server received! rtt = %s" % [my_rtt])
+	byte_array = PackedByteArray(byte_array)
+	var peer : PacketPeer = network.get_peer(id)
+	var rtt : int = peer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME)
+	var s_frame = byte_array.decode_u64(0)
+	Logging.log_line("Packet from server received! rtt = %s. Sent frame = %s" % [rtt , s_frame])
 
 func send_packet() -> void:
 	if is_server:
-		server_api.send_bytes([1, 2, 3], 0, MultiplayerPeer.TRANSFER_MODE_UNRELIABLE, 2)
-		Logging.log_line("Sending packet!!")
+		var b_array : PackedByteArray = PackedByteArray([])
+		b_array.resize(8)
+		b_array.encode_u64(0, CommandFrame.frame)
+		server_api.send_bytes(b_array, 0, MultiplayerPeer.TRANSFER_MODE_UNRELIABLE, 2)
+		Logging.log_line("Sending packet for frame %s" % [CommandFrame.frame])
 		#var server = network.get_peer(0)
 		#for id in connected_players:
 			##var peer : ENetPacketPeer = network.get_peer(id)
