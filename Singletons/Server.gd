@@ -57,7 +57,7 @@ func _on_packet_from_server(id : int, byte_array) -> void:
 	#print("Packet from server %s" % [byte_array])\
 	byte_array = PackedByteArray(byte_array)
 	var packet_type = byte_array.decode_u8(0)
-	var s_frame = byte_array.decode_u64(0)
+	var s_frame = byte_array.decode_u64(1)
 	if packet_type == FRAME_SYNC:
 		CommandFrame.frame = s_frame
 		CommandFrame.previous_command_frame = CommandFrame.get_previous_frame(s_frame)
