@@ -1,0 +1,54 @@
+[gd_scene load_steps=2 format=3 uid="uid://dhmowxkwvxhv4"]
+
+[ext_resource type="Script" path="res://Scenes/UI.gd" id="1_y37ei"]
+
+[node name="Ui" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_y37ei")
+
+[node name="ServerButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.0381944
+anchor_top = 0.160494
+anchor_right = 0.144965
+anchor_bottom = 0.37037
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Server
+"
+metadata/_edit_use_anchors_ = true
+
+[node name="ClientButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.170139
+anchor_top = 0.162037
+anchor_right = 0.27441
+anchor_bottom = 0.381395
+offset_right = -0.120003
+offset_bottom = -0.144005
+text = "Client
+"
+metadata/_edit_use_anchors_ = true
+
+[node name="SendPackets" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.659722
+anchor_top = 0.350309
+anchor_right = 0.790722
+anchor_bottom = 0.515309
+offset_right = 0.0879822
+offset_bottom = 0.0799942
+text = "Send Packets"
+metadata/_edit_use_anchors_ = true
+
+[connection signal="pressed" from="ServerButton" to="." method="_on_server_button_pressed"]
+[connection signal="pressed" from="ClientButton" to="." method="_on_client_button_pressed"]
+[connection signal="pressed" from="SendPackets" to="." method="_on_send_packets_pressed"]
