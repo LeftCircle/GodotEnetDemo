@@ -19,6 +19,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 Server="*res://Singletons/Server.gd"
+CommandFrame="*res://Singletons/CommandFrame.gd"
+Logging="*res://Singletons/Logging/Logging.tscn"
 
 [file_customization]
 

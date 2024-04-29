@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://d2fbn8gilotci"]
+
+[ext_resource type="Script" path="res://Singletons/Logging/Logging.gd" id="1_pe3b1"]
+
+[node name="Logging" type="Node"]
+script = ExtResource("1_pe3b1")

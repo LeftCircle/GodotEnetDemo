@@ -10,12 +10,12 @@ var server_api = SceneMultiplayer.new()
 var connected_players = []
 var packet : PackedByteArray = PackedByteArray([])
 
-func _physics_process(delta):
+func execute():
 	server_api.poll()
-	if is_server:
-		for id in connected_players:
-			var peer : ENetPacketPeer = network.get_peer(id)
-			print("RTT = %s" % [peer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME)])
+	#if is_server:
+		#for id in connected_players:
+			#var peer : ENetPacketPeer = network.get_peer(id)
+			#print("RTT = %s" % [peer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME)])
 
 func _ready():
 	packet.resize(40)
@@ -46,14 +46,21 @@ func _on_peer_disconnected(player_id):
 		connected_players.erase(player_id)
 
 func _on_packet_from_client(id : int, byte_array) -> void:
-	print("Packet from client")
+	var peer : PacketPeer = network.get_peer(id)
+	var rtt : int = peer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME)
+	Logging.log_line("Packet from server received! rtt = %s" % [rtt])
 
 func _on_packet_from_server(id : int, byte_array) -> void:
-	print("Packet from server %s" % [byte_array])
+	#print("Packet from server %s" % [byte_array])\
+	var my_id : int = server_api.get_unique_id()
+	var my_peer : PacketPeer = network.get_peer(my_id)
+	var my_rtt : int = my_peer.get_statistic(ENetPacketPeer.PEER_ROUND_TRIP_TIME)
+	Logging.log_line("Packet from server received! rtt = %s" % [my_rtt])
 
 func send_packet() -> void:
 	if is_server:
-		#server_api.send_bytes([1, 2, 3], 0, MultiplayerPeer.TRANSFER_MODE_UNRELIABLE, 2)
+		server_api.send_bytes([1, 2, 3], 0, MultiplayerPeer.TRANSFER_MODE_UNRELIABLE, 2)
+		Logging.log_line("Sending packet!!")
 		#var server = network.get_peer(0)
 		#for id in connected_players:
 			##var peer : ENetPacketPeer = network.get_peer(id)
